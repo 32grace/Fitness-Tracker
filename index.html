@@ -428,6 +428,45 @@ document.head.appendChild(link);
   }
   .tpl-delete:hover { color: #ff4444; }
 
+  .tpl-item-confirm {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 12px;
+    background: #2a1a1a;
+    border-radius: 10px;
+    border: 1.5px solid #ff4444;
+  }
+
+  .tpl-item-confirm span {
+    flex: 1;
+    font-size: 12px;
+    color: #ff8888;
+  }
+
+  .tpl-confirm-yes {
+    background: #ff4444;
+    border: none;
+    border-radius: 6px;
+    color: #fff;
+    font-size: 12px;
+    font-family: 'DM Sans', sans-serif;
+    padding: 5px 10px;
+    cursor: pointer;
+  }
+
+  .tpl-confirm-no {
+    background: #333;
+    border: none;
+    border-radius: 6px;
+    color: #aaa;
+    font-size: 12px;
+    font-family: 'DM Sans', sans-serif;
+    padding: 5px 10px;
+    cursor: pointer;
+  }
+
+
   .tpl-empty { text-align: center; color: #444; font-size: 13px; padding: 20px 0; }
 
 
@@ -628,25 +667,20 @@ document.head.appendChild(link);
   .item-stats input[type="number"]:focus { background: #303030 !important; }
 
   .remove-btn {
-    position: absolute;
-    top: -5px;
-    right: -5px;
-    width: 16px;
-    height: 16px;
-    border-radius: 50%;
-    background: #333;
+    background: none;
     border: none;
-    color: #888;
+    color: #444;
     cursor: pointer;
-    font-size: 10px;
-    display: none;
+    font-size: 16px;
+    line-height: 1;
+    padding: 2px 4px;
+    flex-shrink: 0;
+    display: flex;
     align-items: center;
     justify-content: center;
-    line-height: 1;
-    padding: 0;
   }
 
-  .item:hover .remove-btn { display: flex; }
+  .remove-btn:hover, .remove-btn:active { color: #ff4444; }
 
 
 
@@ -1110,18 +1144,15 @@ function buildItem(type, entry) {
   removeBtn.innerHTML = '×';
   removeBtn.onclick = () => {
     if (entry.isRecurring) {
-      if (confirm('Remove this recurring stretch from all days?')) {
-        delete data.recurring[entry.id];
-        saveData();
-        renderContent(); renderWeeklyBar(); renderDayDots();
-      }
+      // No confirm dialog — just delete directly (mobile blocks confirm())
+      delete data.recurring[entry.id];
+      saveData();
+      renderContent(); renderWeeklyBar(); renderDayDots();
     } else {
       removeItem(type, entry.id);
     }
   };
-  item.appendChild(removeBtn);
-
-  // Top row: name + badge + tick
+  // Top row: name + badge + tick + delete
   const top = document.createElement('div');
   top.className = 'item-top';
 
@@ -1164,6 +1195,7 @@ function buildItem(type, entry) {
     renderDayDots();
   };
   top.appendChild(check);
+  top.appendChild(removeBtn);
   item.appendChild(top);
 
   // Stats row
@@ -1302,7 +1334,19 @@ function renderTplList() {
     del.title = 'Delete template';
     del.onclick = e => {
       e.stopPropagation();
-      if (confirm('Delete template "' + tpl.name + '"?')) {
+      // Replace item with inline confirm row
+      const confirmRow = document.createElement('div');
+      confirmRow.className = 'tpl-item-confirm';
+      const msg = document.createElement('span');
+      msg.textContent = 'Delete "' + tpl.name + '"?';
+      const yesBtn = document.createElement('button');
+      yesBtn.className = 'tpl-confirm-yes';
+      yesBtn.textContent = 'Delete';
+      const noBtn = document.createElement('button');
+      noBtn.className = 'tpl-confirm-no';
+      noBtn.textContent = 'Cancel';
+      yesBtn.onclick = ev => {
+        ev.stopPropagation();
         deleteTemplate(id);
         if (selectedTplId === id) {
           selectedTplId = null;
@@ -1310,7 +1354,15 @@ function renderTplList() {
           if (confirmBtn) confirmBtn.disabled = true;
         }
         renderTplList();
-      }
+      };
+      noBtn.onclick = ev => {
+        ev.stopPropagation();
+        renderTplList();
+      };
+      confirmRow.appendChild(msg);
+      confirmRow.appendChild(noBtn);
+      confirmRow.appendChild(yesBtn);
+      item.replaceWith(confirmRow);
     };
 
     item.onclick = () => {
@@ -1417,6 +1469,8 @@ document.addEventListener('DOMContentLoaded', () => {
   renderDayDots();
 };
 
+}); // close DOMContentLoaded
+
 function removeItem(type, id) {
   const d = getWeekData(currentWeek)[currentDay];
   const key = type === 'stretch' ? 'stretches' : type === 'strength' ? 'strength' : 'cardio';
@@ -1426,8 +1480,6 @@ function removeItem(type, id) {
   renderWeeklyBar();
   renderDayDots();
 }
-
-}); // close DOMContentLoaded
 
 // ── NAV ──────────────────────────────────────────────────────────────
 document.getElementById('prev-day').onclick = () => {
