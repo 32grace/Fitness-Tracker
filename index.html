@@ -32,7 +32,7 @@ link.rel = 'manifest';
 link.href = url;
 document.head.appendChild(link);
 </script>
-<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+
 <style>
   :root {
     --bg: #0e0e0e;
@@ -48,472 +48,684 @@ document.head.appendChild(link);
     --done-text: #666;
   }
 
-- { box-sizing: border-box; margin: 0; padding: 0; }
-
-/* Reset ALL native form element styling */
-input, button, select, textarea {
--webkit-appearance: none;
--moz-appearance: none;
-appearance: none;
-font-family: ‘DM Sans’, sans-serif;
-font-size: 14px;
-font-weight: 300;
-border-radius: 0;
-outline: none;
-box-shadow: none;
-background: transparent;
-color: #f0ece4;
-border: none;
-}
-
-input[type=“number”]::-webkit-inner-spin-button,
-input[type=“number”]::-webkit-outer-spin-button {
--webkit-appearance: none;
-margin: 0;
-}
-
-input[type=“number”] { -moz-appearance: textfield; }
-
-input:-webkit-autofill,
-input:-webkit-autofill:hover,
-input:-webkit-autofill:focus {
--webkit-box-shadow: 0 0 0px 1000px #1e1e1e inset !important;
--webkit-text-fill-color: #f0ece4 !important;
-caret-color: #f0ece4;
-}
-
-html {
-background: #0e0e0e !important;
-}
-
-body {
-background: #0e0e0e;
-color: #f0ece4;
-font-family: ‘DM Sans’, sans-serif;
-font-weight: 300;
-min-height: 100vh;
-padding-bottom: 60px;
-}
-
-/* HEADER */
-header {
-padding: 16px 20px 0;
-display: flex;
-align-items: flex-end;
-justify-content: space-between;
-gap: 12px;
-}
-
-.logo {
-font-family: ‘Bebas Neue’, sans-serif;
-font-size: 36px;
-letter-spacing: 3px;
-line-height: 1;
-color: #f0ece4;
-}
-
-.logo span { color: #c8f0a0; }
-
-/* DAY NAV */
-.day-nav {
-background: #161616;
-border-bottom: 1px solid #2a2a2a;
-padding: 10px 16px;
-display: flex;
-align-items: center;
-gap: 12px;
-position: sticky;
-top: 0;
-z-index: 100;
-margin-top: 12px;
-}
-
-.day-nav button {
-background: none;
-border: 1px solid #2a2a2a;
-color: #666666;
-width: 34px;
-height: 34px;
-border-radius: 50%;
-cursor: pointer;
-font-size: 16px;
-display: flex;
-align-items: center;
-justify-content: center;
-flex-shrink: 0;
-transition: all 0.15s;
-}
-
-.day-nav button:hover { border-color: #f0ece4; color: #f0ece4; }
-
-.day-info {
-flex: 1;
-min-width: 0;
-}
-
-.day-name {
-font-family: ‘Bebas Neue’, sans-serif;
-font-size: 20px;
-letter-spacing: 2px;
-line-height: 1;
-}
-
-.day-date {
-font-size: 11px;
-color: #666666;
-letter-spacing: 1px;
-text-transform: uppercase;
-margin-top: 2px;
-}
-
-.day-dots {
-display: flex;
-gap: 5px;
-}
-
-.day-dot {
-width: 7px;
-height: 7px;
-border-radius: 50%;
-background: #2a2a2a;
-cursor: pointer;
-transition: background 0.15s;
-}
-
-.day-dot.active { background: #f0ece4; }
-.day-dot.has-data { background: #666666; }
-.day-dot.active.has-data { background: #c8f0a0; }
-
-/* CONTENT */
-.content { padding: 12px 14px; display: flex; flex-direction: column; gap: 10px; }
-
-/* SECTION */
-.section {
-background: #161616;
-border-radius: 14px;
-border: 1px solid #2a2a2a;
-overflow: hidden;
-}
-
-.section-header {
-display: flex;
-align-items: center;
-gap: 12px;
-padding: 10px 14px;
-border-bottom: 1px solid #2a2a2a;
-}
-
-.section-pip {
-width: 10px;
-height: 10px;
-border-radius: 50%;
-flex-shrink: 0;
-}
-
-.section-title {
-font-family: ‘DM Sans’, sans-serif;
-font-size: 13px;
-font-weight: 500;
-letter-spacing: 1.5px;
-text-transform: uppercase;
-flex: 1;
-white-space: nowrap;
-overflow: hidden;
-text-overflow: ellipsis;
-}
-
-.section-count {
-font-size: 11px;
-color: #666666;
-letter-spacing: 1px;
-}
-
-/* STRETCH */
-.stretch .section-pip { background: #c8f0a0; }
-.stretch .section-title { color: #c8f0a0; }
-
-/* STRENGTH */
-.strength .section-pip { background: #f0c060; }
-.strength .section-title { color: #f0c060; }
-
-/* CARDIO */
-.cardio .section-pip { background: #80c8f0; }
-.cardio .section-title { color: #80c8f0; }
-
-/* ITEMS */
-.items { padding: 6px 10px; display: flex; flex-direction: column; gap: 5px; }
-
-.item {
-display: grid;
-align-items: center;
-gap: 8px;
-padding: 7px 10px;
-background: #1e1e1e;
-border-radius: 10px;
-border: 1px solid transparent;
-transition: border-color 0.15s, opacity 0.2s;
-position: relative;
-}
-
-/* grid layouts per type */
-.stretch .item   { grid-template-columns: 1fr 50px 50px auto; }
-.strength .item  { grid-template-columns: 1fr 55px 55px 65px auto; }
-.cardio .item    { grid-template-columns: 1fr 80px 70px auto; }
-
-.item.done {
-opacity: 0.45;
-}
-
-.item input[type=“text”],
-.item input[type=“number”] {
-background: transparent !important;
--webkit-appearance: none;
-appearance: none;
-border: none !important;
-color: #f0ece4 !important;
-font-family: ‘DM Sans’, sans-serif;
-font-weight: 300;
-font-size: 14px;
-outline: none !important;
-box-shadow: none !important;
-width: 100%;
-padding: 0;
-}
-
-.item input[type=“text”]::placeholder,
-.item input[type=“number”]::placeholder {
-color: #666666;
-}
-
-.item input[type=“number”] {
-text-align: center;
-}
-
-.item-label {
-font-size: 9px;
-color: #666666;
-text-transform: uppercase;
-letter-spacing: 1px;
-margin-bottom: 2px;
-}
-
-.field-group { display: flex; flex-direction: column; }
-
-/* TRUNCATE / EXPAND */
-.name-display {
-font-size: 14px;
-font-weight: 300;
-color: #f0ece4;
-white-space: nowrap;
-overflow: hidden;
-text-overflow: ellipsis;
-cursor: pointer;
-padding: 2px 0;
-min-width: 0;
-}
-
-.name-display.placeholder {
-color: #666666;
-}
-
-.name-display::after {
-content: ’ ›’;
-font-size: 11px;
-color: #666666;
-opacity: 0;
-transition: opacity 0.15s;
-}
-
-.name-display:not(.placeholder)::after {
-opacity: 1;
-}
-
-.item.expanded {
-grid-template-columns: 1fr !important;
-gap: 10px;
-}
-
-.item.expanded .name-expanded-row {
-display: flex;
-gap: 8px;
-align-items: center;
-}
-
-.item.expanded .name-expanded-row input[type=“text”] {
-flex: 1;
-border-bottom: 1px solid #2a2a2a;
-padding-bottom: 4px;
-font-size: 15px;
-}
-
-.item.expanded .stats-row {
-display: flex;
-gap: 10px;
-align-items: center;
-}
-
-.item.expanded .stats-row .field-group {
-flex: 1;
-}
-
-.collapse-btn {
-background: none;
-border: none;
-color: #666666;
-font-size: 18px;
-cursor: pointer;
-padding: 0 2px;
-line-height: 1;
-flex-shrink: 0;
-}
-
-.collapse-btn:hover { color: #f0ece4; }
-
-.name-row { min-width: 0; }
-
-/* CHECKBOX */
-.check-btn {
-width: 28px;
-height: 28px;
-border-radius: 8px;
-border: 1.5px solid #555555;
-background: transparent !important;
-cursor: pointer;
-display: flex;
-align-items: center;
-justify-content: center;
-flex-shrink: 0;
-transition: all 0.15s;
-color: transparent;
-font-size: 14px;
--webkit-appearance: none;
-appearance: none;
-padding: 0;
-line-height: 1;
-}
-
-.check-btn.checked {
-background: #c8f0a0 !important;
-border-color: #c8f0a0 !important;
-color: #000000 !important;
-}
-
-.strength .check-btn.checked { background: #f0c060 !important; border-color: #f0c060 !important; color: #000 !important; }
-.cardio .check-btn.checked { background: #80c8f0 !important; border-color: #80c8f0 !important; color: #000 !important; }
-
-.remove-btn {
-position: absolute;
-top: -6px;
-right: -6px;
-width: 18px;
-height: 18px;
-border-radius: 50%;
-background: #2a2a2a;
-border: none;
-color: #666666;
-cursor: pointer;
-font-size: 10px;
-display: none;
-align-items: center;
-justify-content: center;
-line-height: 1;
-}
-
-.item:hover .remove-btn { display: flex; }
-
-/* ADD BUTTON */
-.add-row {
-padding: 0 10px 10px;
-}
-
-.add-btn {
-width: 100%;
-padding: 10px;
-background: none;
-border: 1px dashed #2a2a2a;
-border-radius: 10px;
-color: #666666;
-font-family: ‘DM Sans’, sans-serif;
-font-size: 12px;
-cursor: pointer;
-transition: all 0.15s;
-letter-spacing: 0.5px;
-}
-
-.add-btn:hover { border-color: #f0ece4; color: #f0ece4; }
-
-/* PROGRESS BAR */
-.section-progress {
-height: 3px;
-background: #2a2a2a;
-}
-
-.section-progress-fill {
-height: 100%;
-border-radius: 2px;
-transition: width 0.3s ease;
-}
-
-.stretch .section-progress-fill { background: #c8f0a0; }
-.strength .section-progress-fill { background: #f0c060; }
-.cardio .section-progress-fill { background: #80c8f0; }
-
-/* DIVIDER in item for small labels */
-.field-divider {
-width: 1px;
-height: 28px;
-background: #2a2a2a;
-flex-shrink: 0;
-align-self: center;
-}
-
-/* EMPTY STATE */
-.empty-day {
-text-align: center;
-padding: 24px 20px;
-color: #666666;
-font-size: 12px;
-letter-spacing: 0.5px;
-}
-
-/* WEEKLY SUMMARY BAR */
-.weekly-bar {
-display: flex;
-gap: 4px;
-padding: 0 14px 4px;
-}
-
-.week-cell {
-flex: 1;
-display: flex;
-flex-direction: column;
-align-items: center;
-gap: 4px;
-font-size: 9px;
-color: #666666;
-text-transform: uppercase;
-letter-spacing: 0.5px;
-cursor: pointer;
-}
-
-.week-cell .bar-track {
-width: 100%;
-height: 4px;
-background: #2a2a2a;
-border-radius: 2px;
-overflow: hidden;
-}
-
-.week-cell .bar-fill {
-height: 100%;
-border-radius: 2px;
-background: #c8f0a0;
-transition: width 0.3s;
-}
-
-.week-cell.active-day { color: #f0ece4; }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  /* Reset ALL native form element styling */
+  input, button, select, textarea {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    font-size: 14px;
+    font-weight: 300;
+    border-radius: 0;
+    outline: none;
+    box-shadow: none;
+    background: transparent;
+    color: #f0ece4;
+    border: none;
+  }
+
+  input[type="number"]::-webkit-inner-spin-button,
+  input[type="number"]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+
+  input[type="number"] { -moz-appearance: textfield; }
+
+  input:-webkit-autofill,
+  input:-webkit-autofill:hover,
+  input:-webkit-autofill:focus {
+    -webkit-box-shadow: 0 0 0px 1000px #1e1e1e inset !important;
+    -webkit-text-fill-color: #f0ece4 !important;
+    caret-color: #f0ece4;
+  }
+
+
+  html {
+    background: #0e0e0e !important;
+  }
+
+  body {
+    background: #0e0e0e;
+    color: #f0ece4;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    font-weight: 300;
+    min-height: 100vh;
+    padding-bottom: 60px;
+  }
+
+  /* HEADER */
+  header {
+    padding: 16px 20px 0;
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 12px;
+  }
+
+  .logo {
+    font-family: 'Bebas Neue', Impact, 'Arial Narrow', sans-serif;
+    font-size: 36px;
+    letter-spacing: 3px;
+    line-height: 1;
+    color: #f0ece4;
+  }
+
+  .logo span { color: #c8f0a0; }
+
+  /* DAY NAV */
+  .day-nav {
+    background: #161616;
+    border-bottom: 1px solid #2a2a2a;
+    padding: 10px 16px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    margin-top: 12px;
+  }
+
+  .day-nav button {
+    background: none;
+    border: 1px solid #2a2a2a;
+    color: #666666;
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    cursor: pointer;
+    font-size: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    transition: all 0.15s;
+  }
+
+  .day-nav button:hover { border-color: #f0ece4; color: #f0ece4; }
+
+  .day-info {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .day-name {
+    font-family: 'Bebas Neue', Impact, 'Arial Narrow', sans-serif;
+    font-size: 20px;
+    letter-spacing: 2px;
+    line-height: 1;
+  }
+
+  .day-date {
+    font-size: 11px;
+    color: #666666;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    margin-top: 2px;
+  }
+
+  .day-dots {
+    display: flex;
+    gap: 5px;
+  }
+
+  .day-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: #2a2a2a;
+    cursor: pointer;
+    transition: background 0.15s;
+  }
+
+  .day-dot.active { background: #f0ece4; }
+  .day-dot.has-data { background: #666666; }
+  .day-dot.active.has-data { background: #c8f0a0; }
+
+  /* CONTENT */
+  .content { padding: 12px 14px; display: flex; flex-direction: column; gap: 10px; }
+
+  /* SECTION */
+  .section {
+    background: #161616;
+    border-radius: 14px;
+    border: 1px solid #2a2a2a;
+    overflow: hidden;
+  }
+
+  .section-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 14px;
+    border-bottom: 1px solid #2a2a2a;
+  }
+
+  .section-pip {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+
+  .section-title {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    font-size: 13px;
+    font-weight: 500;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    flex: 1;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .section-count {
+    font-size: 11px;
+    color: #666666;
+    letter-spacing: 1px;
+  }
+
+  /* STRETCH */
+  .stretch .section-pip { background: #c8f0a0; }
+  .stretch .section-title { color: #c8f0a0; }
+
+  /* STRENGTH */
+  .strength .section-pip { background: #f0c060; }
+  .strength .section-title { color: #f0c060; }
+
+  /* CARDIO */
+  .cardio .section-pip { background: #80c8f0; }
+  .cardio .section-title { color: #80c8f0; }
+
+  /* ITEMS */
+  .items { padding: 6px 10px; display: flex; flex-direction: column; gap: 5px; }
+
+  .item {
+    display: grid;
+    align-items: center;
+    gap: 8px;
+    padding: 7px 10px;
+    background: #1e1e1e;
+    border-radius: 10px;
+    border: 1px solid transparent;
+    transition: border-color 0.15s, opacity 0.2s;
+    position: relative;
+  }
+
+
+
+  .item input[type="text"],
+  .item input[type="number"] {
+    background: transparent !important;
+    -webkit-appearance: none;
+    appearance: none;
+    border: none !important;
+    color: #f0ece4 !important;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    font-weight: 300;
+    font-size: 14px;
+    outline: none !important;
+    box-shadow: none !important;
+    width: 100%;
+    padding: 0;
+  }
+
+  .item input[type="text"]::placeholder,
+  .item input[type="number"]::placeholder {
+    color: #666666;
+  }
+
+  .item input[type="number"] {
+    text-align: center;
+  }
+
+  .item-label {
+    font-size: 9px;
+    color: #666666;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 2px;
+  }
+
+  .field-group { display: flex; flex-direction: column; }
+
+
+
+  /* CHECKBOX */
+  .check-btn {
+    width: 28px;
+    height: 28px;
+    border-radius: 8px;
+    border: 1.5px solid #555555;
+    background: transparent !important;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    transition: all 0.15s;
+    color: transparent;
+    font-size: 14px;
+    -webkit-appearance: none;
+    appearance: none;
+    padding: 0;
+    line-height: 1;
+  }
+
+  .check-btn.checked {
+    background: #c8f0a0 !important;
+    border-color: #c8f0a0 !important;
+    color: #000000 !important;
+  }
+
+  .strength .check-btn.checked { background: #f0c060 !important; border-color: #f0c060 !important; color: #000 !important; }
+  .cardio .check-btn.checked { background: #80c8f0 !important; border-color: #80c8f0 !important; color: #000 !important; }
+
+  .remove-btn {
+    position: absolute;
+    top: -6px;
+    right: -6px;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: #2a2a2a;
+    border: none;
+    color: #666666;
+    cursor: pointer;
+    font-size: 10px;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    line-height: 1;
+  }
+
+  .item:hover .remove-btn { display: flex; }
+
+  /* ADD BUTTON */
+  .add-row {
+    padding: 0 10px 10px;
+  }
+
+  .add-btn {
+    width: 100%;
+    padding: 10px;
+    background: none;
+    border: 1px dashed #2a2a2a;
+    border-radius: 10px;
+    color: #666666;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    font-size: 12px;
+    cursor: pointer;
+    transition: all 0.15s;
+    letter-spacing: 0.5px;
+  }
+
+
+  .add-btn:hover { border-color: #f0ece4; color: #f0ece4; }
+
+  /* TEMPLATE BUTTONS */
+  .strength-actions {
+    display: flex;
+    gap: 6px;
+    padding: 0 10px 10px;
+  }
+
+  .tpl-btn {
+    flex: 1;
+    padding: 8px 6px;
+    background: none;
+    border: 1px dashed #2a2a2a;
+    border-radius: 10px;
+    color: #555;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    font-size: 11px;
+    cursor: pointer;
+    transition: all 0.15s;
+    letter-spacing: 0.3px;
+    text-align: center;
+  }
+
+  .tpl-btn:hover { border-color: #f0c060; color: #f0c060; }
+  .tpl-btn.primary { border-color: #f0c060; color: #f0c060; background: #1e1a0a; }
+
+  /* TEMPLATE MODALS — reuse modal-overlay/sheet styles */
+  #save-tpl-modal .modal-title  { color: #f0c060; }
+  #use-tpl-modal  .modal-title  { color: #f0c060; }
+
+  .tpl-list { display: flex; flex-direction: column; gap: 8px; margin-bottom: 20px; max-height: 40vh; overflow-y: auto; }
+
+  .tpl-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 12px;
+    background: #252525;
+    border-radius: 10px;
+    border: 1.5px solid transparent;
+    cursor: pointer;
+    transition: border-color 0.15s;
+  }
+
+  .tpl-item:hover { border-color: #f0c060; }
+  .tpl-item.selected { border-color: #f0c060; background: #1e1a0a; }
+
+  .tpl-item-info { flex: 1; min-width: 0; }
+  .tpl-item-name { font-size: 13px; color: #f0ece4; font-weight: 500; }
+  .tpl-item-meta { font-size: 11px; color: #666; margin-top: 2px; }
+
+  .tpl-delete {
+    background: none;
+    border: none;
+    color: #444;
+    font-size: 16px;
+    cursor: pointer;
+    padding: 2px 4px;
+    line-height: 1;
+  }
+  .tpl-delete:hover { color: #ff4444; }
+
+  .tpl-empty { text-align: center; color: #444; font-size: 13px; padding: 20px 0; }
+
+
+  /* RECURRING STRETCH MODAL */
+  .modal-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.7);
+    z-index: 300;
+    align-items: flex-end;
+    justify-content: center;
+  }
+  .modal-overlay.open { display: flex; }
+
+  .modal-sheet {
+    background: #1a1a1a;
+    border-radius: 18px 18px 0 0;
+    padding: 24px 20px 40px;
+    width: 100%;
+    max-width: 480px;
+    border-top: 1px solid #2a2a2a;
+    animation: slideUp 0.2s ease;
+  }
+
+  @keyframes slideUp {
+    from { transform: translateY(40px); opacity: 0; }
+    to   { transform: translateY(0);    opacity: 1; }
+  }
+
+  .modal-title {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: #c8f0a0;
+    margin-bottom: 16px;
+  }
+
+  .modal-name-input {
+    width: 100%;
+    background: #252525 !important;
+    border: none !important;
+    border-radius: 8px !important;
+    color: #f0ece4 !important;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    font-size: 15px;
+    padding: 10px 12px;
+    outline: none !important;
+    box-shadow: none !important;
+    margin-bottom: 16px;
+  }
+
+  .modal-name-input::placeholder { color: #555; }
+
+  .freq-label {
+    font-size: 11px;
+    color: #666;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+  }
+
+  .freq-options {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    margin-bottom: 20px;
+  }
+
+  .freq-btn {
+    padding: 10px 8px;
+    background: #252525;
+    border: 1.5px solid #333;
+    border-radius: 10px;
+    color: #888;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    font-size: 12px;
+    font-weight: 400;
+    cursor: pointer;
+    transition: all 0.15s;
+    text-align: center;
+    line-height: 1.3;
+  }
+
+  .freq-btn .freq-icon { font-size: 16px; display: block; margin-bottom: 4px; }
+  .freq-btn.selected { border-color: #c8f0a0; color: #c8f0a0; background: #1e2a1e; }
+
+  .modal-actions { display: flex; gap: 10px; }
+
+  .modal-cancel {
+    flex: 1;
+    padding: 12px;
+    background: none;
+    border: 1px solid #333;
+    border-radius: 10px;
+    color: #666;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    font-size: 13px;
+    cursor: pointer;
+  }
+
+  .modal-add {
+    flex: 2;
+    padding: 12px;
+    background: #c8f0a0;
+    border: none;
+    border-radius: 10px;
+    color: #000;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+  }
+
+  .modal-add:disabled { background: #333; color: #666; cursor: default; }
+
+  /* Recurring badge on stretch rows */
+  .recur-badge {
+    font-size: 10px;
+    padding: 2px 5px;
+    border-radius: 4px;
+    background: #1e2a1e;
+    color: #c8f0a0;
+    border: 1px solid #2a4a2a;
+    flex-shrink: 0;
+    white-space: nowrap;
+    letter-spacing: 0.3px;
+  }
+
+
+  /* INLINE ITEM LAYOUT */
+  .item {
+    padding: 8px 10px;
+    background: #1e1e1e;
+    border-radius: 10px;
+    border: 1px solid transparent;
+    transition: border-color 0.15s, opacity 0.2s;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .item.done { opacity: 0.4; }
+
+  .item-top {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .item-top input[type="text"] {
+    flex: 1;
+    background: transparent !important;
+    border: none !important;
+    border-bottom: 1px solid #333 !important;
+    color: #f0ece4 !important;
+    font-size: 13px;
+    font-weight: 400;
+    padding: 2px 0 3px;
+    outline: none !important;
+    box-shadow: none !important;
+    min-width: 0;
+  }
+
+  .item-top input[type="text"]::placeholder { color: #444; }
+  .item-top input[type="text"]:focus { border-bottom-color: #666 !important; }
+
+  .item-stats {
+    display: flex;
+    gap: 8px;
+    padding-left: 2px;
+  }
+
+  .item-stats .field-group {
+    display: flex;
+    flex-direction: column;
+    min-width: 52px;
+    flex: 1;
+  }
+
+  .item-stats input[type="number"] {
+    background: #282828 !important;
+    border: none !important;
+    border-radius: 5px !important;
+    color: #f0ece4 !important;
+    font-size: 12px;
+    text-align: center;
+    padding: 4px 2px;
+    outline: none !important;
+    box-shadow: none !important;
+    width: 100%;
+  }
+
+  .item-stats input[type="number"]::placeholder { color: #444; }
+  .item-stats input[type="number"]:focus { background: #303030 !important; }
+
+  .remove-btn {
+    position: absolute;
+    top: -5px;
+    right: -5px;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: #333;
+    border: none;
+    color: #888;
+    cursor: pointer;
+    font-size: 10px;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    line-height: 1;
+    padding: 0;
+  }
+
+  .item:hover .remove-btn { display: flex; }
+
+
+
+
+  /* PROGRESS BAR */
+  .section-progress {
+    height: 3px;
+    background: #2a2a2a;
+  }
+
+  .section-progress-fill {
+    height: 100%;
+    border-radius: 2px;
+    transition: width 0.3s ease;
+  }
+
+  .stretch .section-progress-fill { background: #c8f0a0; }
+  .strength .section-progress-fill { background: #f0c060; }
+  .cardio .section-progress-fill { background: #80c8f0; }
+
+  /* DIVIDER in item for small labels */
+  .field-divider {
+    width: 1px;
+    height: 28px;
+    background: #2a2a2a;
+    flex-shrink: 0;
+    align-self: center;
+  }
+
+  /* EMPTY STATE */
+  .empty-day {
+    text-align: center;
+    padding: 24px 20px;
+    color: #666666;
+    font-size: 12px;
+    letter-spacing: 0.5px;
+  }
+
+  /* WEEKLY SUMMARY BAR */
+  .weekly-bar {
+    display: flex;
+    gap: 4px;
+    padding: 0 14px 4px;
+  }
+
+  .week-cell {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    font-size: 9px;
+    color: #666666;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    cursor: pointer;
+  }
+
+  .week-cell .bar-track {
+    width: 100%;
+    height: 4px;
+    background: #2a2a2a;
+    border-radius: 2px;
+    overflow: hidden;
+  }
+
+  .week-cell .bar-fill {
+    height: 100%;
+    border-radius: 2px;
+    background: #c8f0a0;
+    transition: width 0.3s;
+  }
+
+  .week-cell.active-day { color: #f0ece4; }
 </style>
 
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" onerror="void(0)">
 </head>
 <body>
 
@@ -539,39 +751,220 @@ transition: width 0.3s;
 
 <div class="content" id="content"></div>
 
+<!-- Save Template Modal -->
+
+<div class="modal-overlay" id="save-tpl-modal">
+  <div class="modal-sheet">
+    <div class="modal-title">Save as Template</div>
+    <input class="modal-name-input" id="tpl-save-name" type="text" placeholder="e.g. Upper Pull, Legs, Push">
+    <div class="modal-actions">
+      <button class="modal-cancel" id="tpl-save-cancel">Cancel</button>
+      <button class="modal-add" id="tpl-save-confirm" disabled>Save Template</button>
+    </div>
+  </div>
+</div>
+
+<!-- Use Template Modal -->
+
+<div class="modal-overlay" id="use-tpl-modal">
+  <div class="modal-sheet">
+    <div class="modal-title">Use Template</div>
+    <div class="tpl-list" id="tpl-list"></div>
+    <div class="modal-actions">
+      <button class="modal-cancel" id="tpl-use-cancel">Cancel</button>
+      <button class="modal-add" id="tpl-use-confirm" disabled>Apply to Today</button>
+    </div>
+  </div>
+</div>
+
+<!-- Recurring Stretch Modal -->
+
+<div class="modal-overlay" id="stretch-modal">
+  <div class="modal-sheet">
+    <div class="modal-title">New Stretch</div>
+    <input class="modal-name-input" id="modal-name" type="text" placeholder="Exercise name e.g. Hip flexor stretch">
+    <div class="freq-label">Repeat</div>
+    <div class="freq-options">
+      <button class="freq-btn" data-freq="once">
+        <span class="freq-icon">1️⃣</span>This day only
+      </button>
+      <button class="freq-btn" data-freq="daily">
+        <span class="freq-icon">🔁</span>Every day
+      </button>
+      <button class="freq-btn" data-freq="2day">
+        <span class="freq-icon">📅</span>Every 2 days
+      </button>
+      <button class="freq-btn" data-freq="3day">
+        <span class="freq-icon">🗓️</span>Every 3 days
+      </button>
+    </div>
+    <div class="modal-actions">
+      <button class="modal-cancel" id="modal-cancel">Cancel</button>
+      <button class="modal-add" id="modal-confirm" disabled>Add Stretch</button>
+    </div>
+  </div>
+</div>
+
 <script>
 // ── STATE ────────────────────────────────────────────────────────────
 const DAYS = ['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'];
-const STORAGE_KEY = 'form_tracker_v2';
+const STORAGE_KEY = 'form_tracker_v3';
 
-let currentDay = 0; // 0–6
+let currentDay = 0;     // 0–6 (Mon–Sun)
+let currentWeek = 0;    // 0 = this week, 1 = next week, -1 = last week, etc.
 let data = loadData();
+
+function weekKey(weekOffset) {
+  // Use ISO week date as a stable key: e.g. "2026-W12"
+  const monday = getMondayOfWeek(weekOffset);
+  const year = monday.getFullYear();
+  const startOfYear = new Date(year, 0, 1);
+  const weekNum = Math.ceil(((monday - startOfYear) / 86400000 + startOfYear.getDay() + 1) / 7);
+  return year + '-W' + String(weekNum).padStart(2, '0');
+}
+
+function getMondayOfWeek(weekOffset) {
+  const today = new Date();
+  const dayOfWeek = today.getDay();
+  const diff = dayOfWeek === 0 ? -6 : 1 - dayOfWeek;
+  const monday = new Date(today);
+  monday.setDate(today.getDate() + diff + weekOffset * 7);
+  monday.setHours(0, 0, 0, 0);
+  return monday;
+}
 
 function loadData() {
   try {
     const saved = localStorage.getItem(STORAGE_KEY);
     if (saved) return JSON.parse(saved);
   } catch(e) {}
-  // default: one empty entry per section per day
-  const d = {};
+  return {};
+}
+
+function getWeekData(weekOffset) {
+  const key = weekKey(weekOffset);
+  if (!data[key]) {
+    data[key] = {};
+    DAYS.forEach((_, i) => {
+      data[key][i] = {
+        stretches: [],
+        strength: [],
+        cardio: []
+      };
+    });
+  }
+  // Ensure all days exist (for older stored data)
   DAYS.forEach((_, i) => {
-    d[i] = {
-      stretches: [emptyStretch()],
-      strength: [emptyStrength()],
-      cardio: [emptyCardio()]
-    };
+    if (!data[key][i]) data[key][i] = { stretches: [], strength: [], cardio: [] };
   });
-  return d;
+  return data[key];
 }
 
 function saveData() {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
 }
 
-function emptyStretch() { return { name: '', reps: '', sets: '', done: false, id: uid() }; }
+function emptyStretch(freq) { return { name: '', reps: '', sets: '', done: false, id: uid(), freq: freq || 'once' }; }
+
+function getTemplates() {
+  if (!data.templates) data.templates = {};
+  return data.templates;
+}
+
+function saveTemplate(name, exercises) {
+  if (!data.templates) data.templates = {};
+  const id = uid();
+  data.templates[id] = {
+    id,
+    name,
+    exercises: exercises
+      .filter(e => e.name.trim())
+      .map(e => ({ name: e.name, reps: e.reps || '', sets: e.sets || '' }))
+  };
+  saveData();
+}
+
+function deleteTemplate(id) {
+  if (data.templates) delete data.templates[id];
+  saveData();
+}
+
+function applyTemplate(tplId) {
+  const tpl = getTemplates()[tplId];
+  if (!tpl) return;
+  const d = getWeekData(currentWeek)[currentDay];
+  tpl.exercises.forEach(ex => {
+    d.strength.push({
+      ...emptyStrength(),
+      name: ex.name,
+      reps: ex.reps,
+      sets: ex.sets,
+      weight: ''  // always blank
+    });
+  });
+  saveData();
+  renderContent();
+  renderWeeklyBar();
+  renderDayDots();
+}
 function emptyStrength() { return { name: '', reps: '', sets: '', weight: '', done: false, id: uid() }; }
 function emptyCardio() { return { name: '', distance: '', duration: '', done: false, id: uid() }; }
 function uid() { return Math.random().toString(36).slice(2); }
+
+// Recurring stretches — stored separately, keyed by their id
+// data.recurring[id] = { name, reps, sets, freq, startDate (YYYY-MM-DD) }
+// Ticks per day: data.recurTicks[dayKey][id] = true/false
+// dayKey = "YYYY-MM-DD"
+
+function getDayKey(weekOffset, dayIdx) {
+  const monday = getMondayOfWeek(weekOffset);
+  const d = new Date(monday);
+  d.setDate(monday.getDate() + dayIdx);
+  return d.toISOString().slice(0, 10);
+}
+
+function getRecurring() {
+  if (!data.recurring) data.recurring = {};
+  return data.recurring;
+}
+
+function getRecurTicks(dayKey) {
+  if (!data.recurTicks) data.recurTicks = {};
+  if (!data.recurTicks[dayKey]) data.recurTicks[dayKey] = {};
+  return data.recurTicks[dayKey];
+}
+
+// Work out which recurring stretches should appear on a given day
+function getRecurringForDay(weekOffset, dayIdx) {
+  const dayKey = getDayKey(weekOffset, dayIdx);
+  const dayDate = new Date(dayKey);
+  const recurring = getRecurring();
+  const ticks = getRecurTicks(dayKey);
+  const results = [];
+
+  Object.values(recurring).forEach(r => {
+    const start = new Date(r.startDate);
+    const diffDays = Math.round((dayDate - start) / 86400000);
+    if (diffDays < 0) return; // before start date
+    let show = false;
+    if (r.freq === 'daily') show = true;
+    else if (r.freq === '2day') show = (diffDays % 2 === 0);
+    else if (r.freq === '3day') show = (diffDays % 3 === 0);
+    else if (r.freq === 'once') show = (r.startDate === dayKey);
+    if (show) {
+      results.push({
+        id: r.id,
+        name: r.name,
+        reps: r.reps || '',
+        sets: r.sets || '',
+        freq: r.freq,
+        done: ticks[r.id] || false,
+        isRecurring: true
+      });
+    }
+  });
+  return results;
+}
 
 // ── RENDER ───────────────────────────────────────────────────────────
 function render() {
@@ -582,17 +975,12 @@ function render() {
 }
 
 function updateHeader() {
-  const today = new Date();
-  const monday = new Date(today);
-  const dayOfWeek = today.getDay();
-  const diff = dayOfWeek === 0 ? -6 : 1 - dayOfWeek;
-  monday.setDate(today.getDate() + diff);
+  const monday = getMondayOfWeek(currentWeek);
   const current = new Date(monday);
   current.setDate(monday.getDate() + currentDay);
   document.getElementById('nav-day-name').textContent = DAYS[currentDay];
   document.getElementById('nav-day-date').textContent = current.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
   const weekStart = monday.toLocaleDateString('en-GB', { day: 'numeric', month: 'short' });
-  const weekEnd = new Date(monday.setDate(monday.getDate() + 6)).toLocaleDateString('en-GB', { day: 'numeric', month: 'short' });
   document.getElementById('week-label').textContent = `W/C ${weekStart}`;
 }
 
@@ -610,7 +998,8 @@ function renderDayDots() {
 }
 
 function hasData(dayIdx) {
-  const d = data[dayIdx];
+  const wd = getWeekData(currentWeek);
+  const d = wd[dayIdx];
   if (!d) return false;
   return [...d.stretches, ...d.strength, ...d.cardio].some(e => e.name.trim());
 }
@@ -618,8 +1007,9 @@ function hasData(dayIdx) {
 function renderWeeklyBar() {
   const container = document.getElementById('weekly-bar');
   container.innerHTML = '';
+  const wd = getWeekData(currentWeek);
   DAYS.forEach((day, i) => {
-    const d = data[i];
+    const d = wd[i];
     const total = d.stretches.length + d.strength.length + d.cardio.length;
     const done = [...d.stretches, ...d.strength, ...d.cardio].filter(e => e.done).length;
     const pct = total > 0 ? Math.round((done / total) * 100) : 0;
@@ -640,51 +1030,46 @@ function completionOf(items) {
 function renderContent() {
   const container = document.getElementById('content');
   container.innerHTML = '';
-  const d = data[currentDay];
+  const d = getWeekData(currentWeek)[currentDay];
 
-  container.appendChild(buildSection('stretch', '🧘 Stretches', d.stretches));
+  // Merge recurring stretches (shown first) with manual ones
+  const recurStretches = getRecurringForDay(currentWeek, currentDay);
+  const allStretches = [...recurStretches, ...d.stretches];
+
+  container.appendChild(buildSection('stretch', '🧘 Stretches', allStretches));
   container.appendChild(buildSection('strength', '🏋️ Strength & Conditioning', d.strength));
   container.appendChild(buildSection('cardio', '🏃 Cardio', d.cardio));
 }
 
 function buildSection(type, title, items) {
-  const named = items.filter(e => e.name.trim());
-  const doneCount = named.filter(e => e.done).length;
-  const pct = named.length ? (doneCount / named.length) * 100 : 0;
+  const doneCount = items.filter(e => e.done).length;
+  const total = items.length;
+  const pct = total ? (doneCount / total) * 100 : 0;
 
   const section = document.createElement('div');
   section.className = `section ${type}`;
 
-  // Header
   const hdr = document.createElement('div');
   hdr.className = 'section-header';
   hdr.innerHTML = `
     <div class="section-pip"></div>
     <div class="section-title">${title}</div>
-    <div class="section-count">${doneCount}/${named.length || 0}</div>
+    <div class="section-count">${doneCount}/${total}</div>
   `;
   section.appendChild(hdr);
 
-  // Progress bar
   const prog = document.createElement('div');
   prog.className = 'section-progress';
   prog.innerHTML = `<div class="section-progress-fill" style="width:${pct}%"></div>`;
   section.appendChild(prog);
 
-  // Items
   const itemsContainer = document.createElement('div');
   itemsContainer.className = 'items';
-
-  items.forEach((entry, idx) => {
-    const row = buildItem(type, entry, idx);
-    itemsContainer.appendChild(row);
-  });
-
+  items.forEach(entry => itemsContainer.appendChild(buildItem(type, entry)));
   section.appendChild(itemsContainer);
 
-  // Add button
   const addRow = document.createElement('div');
-  addRow.className = 'add-row';
+  addRow.style.padding = '0 10px 10px';
   const addBtn = document.createElement('button');
   addBtn.className = 'add-btn';
   addBtn.textContent = `+ Add ${type === 'stretch' ? 'stretch' : type === 'strength' ? 'exercise' : 'session'}`;
@@ -692,67 +1077,123 @@ function buildSection(type, title, items) {
   addRow.appendChild(addBtn);
   section.appendChild(addRow);
 
+  // Strength-only: template buttons
+  if (type === 'strength') {
+    const tplRow = document.createElement('div');
+    tplRow.className = 'strength-actions';
+
+    const useBtn = document.createElement('button');
+    useBtn.className = 'tpl-btn';
+    useBtn.textContent = '📋 Use template';
+    useBtn.onclick = () => openUseTplModal();
+
+    const saveBtn = document.createElement('button');
+    saveBtn.className = 'tpl-btn';
+    saveBtn.textContent = '💾 Save as template';
+    saveBtn.onclick = () => openSaveTplModal();
+
+    tplRow.appendChild(useBtn);
+    tplRow.appendChild(saveBtn);
+    section.appendChild(tplRow);
+  }
+
   return section;
 }
 
-function buildItem(type, entry, idx) {
-  const row = document.createElement('div');
-  row.className = 'item' + (entry.done ? ' done' : '');
-  row.dataset.id = entry.id;
+function buildItem(type, entry) {
+  const item = document.createElement('div');
+  item.className = 'item' + (entry.done ? ' done' : '');
+  item.dataset.id = entry.id;
 
   const removeBtn = document.createElement('button');
   removeBtn.className = 'remove-btn';
-  removeBtn.title = 'Remove';
   removeBtn.innerHTML = '×';
-  removeBtn.onclick = () => removeItem(type, entry.id);
-  row.appendChild(removeBtn);
+  removeBtn.onclick = () => {
+    if (entry.isRecurring) {
+      if (confirm('Remove this recurring stretch from all days?')) {
+        delete data.recurring[entry.id];
+        saveData();
+        renderContent(); renderWeeklyBar(); renderDayDots();
+      }
+    } else {
+      removeItem(type, entry.id);
+    }
+  };
+  item.appendChild(removeBtn);
 
-  // --- COLLAPSED VIEW ---
-  // Name display (truncated, tappable)
-  const nameRow = document.createElement('div');
-  nameRow.className = 'field-group name-row';
-  const nameLabel = document.createElement('div');
-  nameLabel.className = 'item-label';
-  nameLabel.textContent = type === 'cardio' ? 'Activity' : 'Exercise';
-  const nameDisplay = document.createElement('div');
-  nameDisplay.className = 'name-display' + (entry.name ? '' : ' placeholder');
-  nameDisplay.textContent = entry.name || (type === 'cardio' ? 'e.g. Zone 2 run' : type === 'stretch' ? 'e.g. Hip flexor stretch' : 'e.g. Goblet squat');
-  nameDisplay.title = entry.name;
-  nameDisplay.onclick = () => expandItem(row, type, entry);
-  nameRow.appendChild(nameLabel);
-  nameRow.appendChild(nameDisplay);
-  row.appendChild(nameRow);
+  // Top row: name + badge + tick
+  const top = document.createElement('div');
+  top.className = 'item-top';
 
-  // --- STAT FIELDS (collapsed, inline) ---
-  if (type === 'stretch') {
-    row.appendChild(makeNumberField('Reps', entry.reps, v => { entry.reps = v; saveData(); }));
-    row.appendChild(makeNumberField('Sets', entry.sets, v => { entry.sets = v; saveData(); }));
+  const nameInp = document.createElement('input');
+  nameInp.type = 'text';
+  nameInp.value = entry.name;
+  nameInp.placeholder = type === 'cardio' ? 'e.g. Zone 2 run' : type === 'stretch' ? 'e.g. Hip flexor stretch' : 'e.g. Goblet squat';
+  if (entry.isRecurring) {
+    nameInp.readOnly = true;
+    nameInp.style.cursor = 'default';
+  } else {
+    nameInp.oninput = e => { entry.name = e.target.value; saveData(); };
   }
-  if (type === 'strength') {
-    row.appendChild(makeNumberField('Reps', entry.reps, v => { entry.reps = v; saveData(); }));
-    row.appendChild(makeNumberField('Sets', entry.sets, v => { entry.sets = v; saveData(); }));
-    row.appendChild(makeNumberField('Wt (kg)', entry.weight, v => { entry.weight = v; saveData(); }, 0.5));
-  }
-  if (type === 'cardio') {
-    row.appendChild(makeNumberField('Dist (km)', entry.distance, v => { entry.distance = v; saveData(); }, 0.1));
-    row.appendChild(makeNumberField('Dur (min)', entry.duration, v => { entry.duration = v; saveData(); }));
+  top.appendChild(nameInp);
+
+  // Recur badge
+  if (entry.isRecurring) {
+    const badge = document.createElement('span');
+    badge.className = 'recur-badge';
+    const icons = { daily: '🔁 Daily', '2day': '📅 ×2', '3day': '🗓️ ×3', once: '1️⃣' };
+    badge.textContent = icons[entry.freq] || '';
+    top.appendChild(badge);
   }
 
-  // Check button
   const check = document.createElement('button');
   check.className = 'check-btn' + (entry.done ? ' checked' : '');
   check.innerHTML = entry.done ? '✓' : '';
-  check.setAttribute('aria-label', entry.done ? 'Mark undone' : 'Mark done');
   check.onclick = () => {
-    entry.done = !entry.done;
+    if (entry.isRecurring) {
+      const dayKey = getDayKey(currentWeek, currentDay);
+      const ticks = getRecurTicks(dayKey);
+      ticks[entry.id] = !ticks[entry.id];
+      entry.done = ticks[entry.id];
+    } else {
+      entry.done = !entry.done;
+    }
     saveData();
     renderContent();
     renderWeeklyBar();
     renderDayDots();
   };
-  row.appendChild(check);
+  top.appendChild(check);
+  item.appendChild(top);
 
-  return row;
+  // Stats row
+  const stats = document.createElement('div');
+  stats.className = 'item-stats';
+
+  if (type === 'stretch') {
+    stats.appendChild(makeNumberField('Reps', entry.reps, v => {
+      entry.reps = v;
+      if (entry.isRecurring && data.recurring[entry.id]) data.recurring[entry.id].reps = v;
+      saveData();
+    }));
+    stats.appendChild(makeNumberField('Sets', entry.sets, v => {
+      entry.sets = v;
+      if (entry.isRecurring && data.recurring[entry.id]) data.recurring[entry.id].sets = v;
+      saveData();
+    }));
+  }
+  if (type === 'strength') {
+    stats.appendChild(makeNumberField('Reps', entry.reps, v => { entry.reps = v; saveData(); }));
+    stats.appendChild(makeNumberField('Sets', entry.sets, v => { entry.sets = v; saveData(); }));
+    stats.appendChild(makeNumberField('Wt (kg)', entry.weight, v => { entry.weight = v; saveData(); }, 0.5));
+  }
+  if (type === 'cardio') {
+    stats.appendChild(makeNumberField('Dist (km)', entry.distance, v => { entry.distance = v; saveData(); }, 0.1));
+    stats.appendChild(makeNumberField('Dur (min)', entry.duration, v => { entry.duration = v; saveData(); }));
+  }
+
+  item.appendChild(stats);
+  return item;
 }
 
 function makeNumberField(label, value, onChange, step) {
@@ -770,85 +1211,7 @@ function makeNumberField(label, value, onChange, step) {
   return fg;
 }
 
-function expandItem(row, type, entry) {
-  // Toggle collapse if already expanded
-  if (row.classList.contains('expanded')) {
-    collapseItem(row, entry);
-    return;
-  }
 
-  row.classList.add('expanded');
-  row.innerHTML = '';
-
-  // Remove button
-  const removeBtn = document.createElement('button');
-  removeBtn.className = 'remove-btn';
-  removeBtn.innerHTML = '×';
-  removeBtn.onclick = () => removeItem(type, entry.id);
-  row.appendChild(removeBtn);
-
-  // Expanded name row
-  const nameExpRow = document.createElement('div');
-  nameExpRow.className = 'name-expanded-row';
-
-  const inp = document.createElement('input');
-  inp.type = 'text';
-  inp.value = entry.name;
-  inp.placeholder = type === 'cardio' ? 'e.g. Zone 2 run' : type === 'stretch' ? 'e.g. Hip flexor stretch' : 'e.g. Goblet squat';
-  inp.oninput = (e) => { entry.name = e.target.value; saveData(); };
-  inp.autofocus = true;
-
-  const collapseBtn = document.createElement('button');
-  collapseBtn.className = 'collapse-btn';
-  collapseBtn.innerHTML = '✕';
-  collapseBtn.title = 'Collapse';
-  collapseBtn.onclick = () => collapseItem(row, entry);
-
-  nameExpRow.appendChild(inp);
-  nameExpRow.appendChild(collapseBtn);
-  row.appendChild(nameExpRow);
-
-  // Stats row
-  const statsRow = document.createElement('div');
-  statsRow.className = 'stats-row';
-
-  if (type === 'stretch') {
-    statsRow.appendChild(makeNumberField('Reps', entry.reps, v => { entry.reps = v; saveData(); }));
-    statsRow.appendChild(makeNumberField('Sets', entry.sets, v => { entry.sets = v; saveData(); }));
-  }
-  if (type === 'strength') {
-    statsRow.appendChild(makeNumberField('Reps', entry.reps, v => { entry.reps = v; saveData(); }));
-    statsRow.appendChild(makeNumberField('Sets', entry.sets, v => { entry.sets = v; saveData(); }));
-    statsRow.appendChild(makeNumberField('Wt (kg)', entry.weight, v => { entry.weight = v; saveData(); }, 0.5));
-  }
-  if (type === 'cardio') {
-    statsRow.appendChild(makeNumberField('Dist (km)', entry.distance, v => { entry.distance = v; saveData(); }, 0.1));
-    statsRow.appendChild(makeNumberField('Dur (min)', entry.duration, v => { entry.duration = v; saveData(); }));
-  }
-
-  // Check button
-  const check = document.createElement('button');
-  check.className = 'check-btn' + (entry.done ? ' checked' : '');
-  check.innerHTML = entry.done ? '✓' : '';
-  check.onclick = () => {
-    entry.done = !entry.done;
-    saveData();
-    renderContent();
-    renderWeeklyBar();
-    renderDayDots();
-  };
-  statsRow.appendChild(check);
-  row.appendChild(statsRow);
-
-  setTimeout(() => inp.focus(), 50);
-}
-
-function collapseItem(row, entry) {
-  saveData();
-  renderContent();
-  renderWeeklyBar();
-  renderDayDots();
-}
 
 
 function updateHeaderCount() {
@@ -856,106 +1219,243 @@ function updateHeaderCount() {
 }
 
 function addItem(type) {
-  const d = data[currentDay];
-  const key = type === 'stretch' ? 'stretches' : type === 'strength' ? 'strength' : 'cardio';
-  const list = d[key];
-  if (list.length > 0 && !list[list.length - 1].name.trim()) {
-    const section = document.querySelector('.section.' + type);
-    if (section) {
-      const rows = section.querySelectorAll('.item');
-      const last = rows[rows.length - 1];
-      if (last) {
-        const color = type === 'stretch' ? 'var(--stretch)' : type === 'strength' ? 'var(--strength)' : 'var(--cardio)';
-        last.style.borderColor = color;
-        const nameInput = last.querySelector('input[type="text"]');
-        if (nameInput) nameInput.focus();
-        setTimeout(() => { last.style.borderColor = 'transparent'; }, 900);
-      }
-    }
+  if (type === 'stretch') {
+    openStretchModal();
     return;
   }
-  if (type === 'stretch') d.stretches.push(emptyStretch());
+  const d = getWeekData(currentWeek)[currentDay];
   if (type === 'strength') d.strength.push(emptyStrength());
   if (type === 'cardio') d.cardio.push(emptyCardio());
   saveData();
   renderContent();
   renderWeeklyBar();
   renderDayDots();
+  setTimeout(() => {
+    const inputs = document.querySelectorAll('.section.' + type + ' .item-top input[type="text"]');
+    if (inputs.length) inputs[inputs.length - 1].focus();
+  }, 40);
 }
 
-function removeItem(type, id) {
-  const d = data[currentDay];
-  const key = type === 'stretch' ? 'stretches' : type === 'strength' ? 'strength' : 'cardio';
-  if (d[key].length <= 1) {
-    // reset to empty rather than removing last
-    if (type === 'stretch') d[key] = [emptyStretch()];
-    if (type === 'strength') d[key] = [emptyStrength()];
-    if (type === 'cardio') d[key] = [emptyCardio()];
-  } else {
-    d[key] = d[key].filter(e => e.id !== id);
+// ── STRETCH MODAL ────────────────────────────────────────────────────
+let selectedFreq = null;
+
+function openStretchModal() {
+  selectedFreq = null;
+  document.getElementById('modal-name').value = '';
+  document.querySelectorAll('.freq-btn').forEach(b => b.classList.remove('selected'));
+  document.getElementById('modal-confirm').disabled = true;
+  document.getElementById('stretch-modal').classList.add('open');
+  setTimeout(() => document.getElementById('modal-name').focus(), 100);
+}
+
+function closeStretchModal() {
+  document.getElementById('stretch-modal').classList.remove('open');
+  selectedFreq = null;
+}
+
+function updateModalConfirm() {
+  const name = document.getElementById('modal-name').value.trim();
+  document.getElementById('modal-confirm').disabled = !(name && selectedFreq);
+}
+
+// Wire up modal listeners after DOM is ready
+// ── TEMPLATE MODAL OPENERS (top-level so buttons can call them) ──────
+function openSaveTplModal() {
+  const d = getWeekData(currentWeek)[currentDay];
+  const named = d.strength.filter(e => e.name.trim());
+  if (!named.length) {
+    alert('Add some exercises first before saving a template.');
+    return;
   }
+  document.getElementById('tpl-save-name').value = '';
+  document.getElementById('tpl-save-confirm').disabled = true;
+  document.getElementById('save-tpl-modal').classList.add('open');
+  setTimeout(() => document.getElementById('tpl-save-name').focus(), 100);
+}
+
+// selectedTplId and renderTplList are top-level
+let selectedTplId = null;
+
+function renderTplList() {
+  const list = document.getElementById('tpl-list');
+  if (!list) return;
+  list.innerHTML = '';
+  const templates = getTemplates();
+  const keys = Object.keys(templates);
+  if (!keys.length) {
+    list.innerHTML = '<div class="tpl-empty">No templates saved yet.</div>';
+    return;
+  }
+  keys.forEach(id => {
+    const tpl = templates[id];
+    const item = document.createElement('div');
+    item.className = 'tpl-item' + (selectedTplId === id ? ' selected' : '');
+
+    const info = document.createElement('div');
+    info.className = 'tpl-item-info';
+    info.innerHTML = `<div class="tpl-item-name">${tpl.name}</div>
+      <div class="tpl-item-meta">${tpl.exercises.length} exercise${tpl.exercises.length !== 1 ? 's' : ''}: ${tpl.exercises.map(e => e.name).join(', ')}</div>`;
+
+    const del = document.createElement('button');
+    del.className = 'tpl-delete';
+    del.innerHTML = '×';
+    del.title = 'Delete template';
+    del.onclick = e => {
+      e.stopPropagation();
+      if (confirm('Delete template "' + tpl.name + '"?')) {
+        deleteTemplate(id);
+        if (selectedTplId === id) {
+          selectedTplId = null;
+          const confirmBtn = document.getElementById('tpl-use-confirm');
+          if (confirmBtn) confirmBtn.disabled = true;
+        }
+        renderTplList();
+      }
+    };
+
+    item.onclick = () => {
+      selectedTplId = id;
+      const confirmBtn = document.getElementById('tpl-use-confirm');
+      if (confirmBtn) confirmBtn.disabled = false;
+      renderTplList();
+    };
+
+    item.appendChild(info);
+    item.appendChild(del);
+    list.appendChild(item);
+  });
+}
+
+function openUseTplModal() {
+  selectedTplId = null;
+  const confirmBtn = document.getElementById('tpl-use-confirm');
+  if (confirmBtn) confirmBtn.disabled = true;
+  renderTplList();
+  document.getElementById('use-tpl-modal').classList.add('open');
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+
+  // ── SAVE TEMPLATE MODAL ──────────────────────────────────────────
+  function closeSaveTplModal() {
+    document.getElementById('save-tpl-modal').classList.remove('open');
+  }
+
+  document.getElementById('tpl-save-name').addEventListener('input', () => {
+    document.getElementById('tpl-save-confirm').disabled =
+      !document.getElementById('tpl-save-name').value.trim();
+  });
+
+  document.getElementById('tpl-save-cancel').onclick = closeSaveTplModal;
+  document.getElementById('save-tpl-modal').onclick = e => {
+    if (e.target === document.getElementById('save-tpl-modal')) closeSaveTplModal();
+  };
+
+  document.getElementById('tpl-save-confirm').onclick = () => {
+    const name = document.getElementById('tpl-save-name').value.trim();
+    if (!name) return;
+    const d = getWeekData(currentWeek)[currentDay];
+    saveTemplate(name, d.strength);
+    closeSaveTplModal();
+  };
+
+  // ── USE TEMPLATE MODAL ───────────────────────────────────────────
+  function closeUseTplModal() {
+    document.getElementById('use-tpl-modal').classList.remove('open');
+    selectedTplId = null;
+  }
+
+  document.getElementById('tpl-use-cancel').onclick = closeUseTplModal;
+  document.getElementById('use-tpl-modal').onclick = e => {
+    if (e.target === document.getElementById('use-tpl-modal')) closeUseTplModal();
+  };
+
+  document.getElementById('tpl-use-confirm').onclick = () => {
+    if (!selectedTplId) return;
+    applyTemplate(selectedTplId);
+    closeUseTplModal();
+  };
+
+  // ── STRETCH MODAL ────────────────────────────────────────────────
+  document.querySelectorAll('.freq-btn').forEach(btn => {
+    btn.onclick = () => {
+      document.querySelectorAll('.freq-btn').forEach(b => b.classList.remove('selected'));
+      btn.classList.add('selected');
+      selectedFreq = btn.dataset.freq;
+      updateModalConfirm();
+    };
+  });
+
+  document.getElementById('modal-name').addEventListener('input', updateModalConfirm);
+  document.getElementById('modal-cancel').onclick = closeStretchModal;
+  document.getElementById('stretch-modal').onclick = (e) => {
+    if (e.target === document.getElementById('stretch-modal')) closeStretchModal();
+  };
+  document.getElementById('modal-confirm').onclick = () => {
+  const name = document.getElementById('modal-name').value.trim();
+  if (!name || !selectedFreq) return;
+
+  const dayKey = getDayKey(currentWeek, currentDay);
+
+  if (selectedFreq === 'once') {
+    // Add as a normal one-off stretch for this day only
+    const d = getWeekData(currentWeek)[currentDay];
+    const s = emptyStretch('once');
+    s.name = name;
+    d.stretches.push(s);
+  } else {
+    // Add as a recurring stretch
+    const id = uid();
+    if (!data.recurring) data.recurring = {};
+    data.recurring[id] = { id, name, reps: '', sets: '', freq: selectedFreq, startDate: dayKey };
+  }
+
+  saveData();
+  closeStretchModal();
+  renderContent();
+  renderWeeklyBar();
+  renderDayDots();
+};
+
+function removeItem(type, id) {
+  const d = getWeekData(currentWeek)[currentDay];
+  const key = type === 'stretch' ? 'stretches' : type === 'strength' ? 'strength' : 'cardio';
+  d[key] = d[key].filter(e => e.id !== id);
   saveData();
   renderContent();
   renderWeeklyBar();
   renderDayDots();
 }
 
+}); // close DOMContentLoaded
+
 // ── NAV ──────────────────────────────────────────────────────────────
 document.getElementById('prev-day').onclick = () => {
-  currentDay = (currentDay - 1 + 7) % 7;
+  if (currentDay === 0) {
+    currentWeek--;
+    currentDay = 6;
+  } else {
+    currentDay--;
+  }
   render();
 };
 
 document.getElementById('next-day').onclick = () => {
-  currentDay = (currentDay + 1) % 7;
+  if (currentDay === 6) {
+    currentWeek++;
+    currentDay = 0;
+  } else {
+    currentDay++;
+  }
   render();
 };
 
 // Set current day to today
 const todayIdx = (new Date().getDay() + 6) % 7;
 currentDay = todayIdx;
+currentWeek = 0;
 
 render();
-</script>
-
-<!-- PWA Install Banner -->
-
-<div id="install-banner" style="display:none;position:fixed;bottom:0;left:0;right:0;background:#161616;border-top:1px solid #2a2a2a;padding:14px 20px;display:flex;align-items:center;gap:12px;z-index:200;">
-  <div style="flex:1;min-width:0">
-    <div style="font-family:'Bebas Neue',sans-serif;font-size:16px;letter-spacing:1px;color:#f0ece4">Add to Home Screen</div>
-    <div style="font-size:11px;color:#666;margin-top:2px">Install FORM for quick access & offline use</div>
-  </div>
-  <button id="install-btn" style="background:#c8f0a0;border:none;color:#000;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:500;padding:8px 16px;border-radius:8px;cursor:pointer;flex-shrink:0">Install</button>
-  <button id="install-dismiss" style="background:none;border:none;color:#666;font-size:18px;cursor:pointer;padding:4px;flex-shrink:0">×</button>
-</div>
-
-<script>
-let deferredPrompt = null;
-const banner = document.getElementById('install-banner');
-const installBtn = document.getElementById('install-btn');
-const dismissBtn = document.getElementById('install-dismiss');
-
-window.addEventListener('beforeinstallprompt', (e) => {
-  e.preventDefault();
-  deferredPrompt = e;
-  banner.style.display = 'flex';
-});
-
-installBtn.addEventListener('click', async () => {
-  if (!deferredPrompt) return;
-  deferredPrompt.prompt();
-  const { outcome } = await deferredPrompt.userChoice;
-  deferredPrompt = null;
-  banner.style.display = 'none';
-});
-
-dismissBtn.addEventListener('click', () => {
-  banner.style.display = 'none';
-});
-
-window.addEventListener('appinstalled', () => {
-  banner.style.display = 'none';
-});
 </script>
 
 </body>
