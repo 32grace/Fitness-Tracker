@@ -599,6 +599,38 @@ document.head.appendChild(link);
   }
 
 
+
+  /* DRAG AND DROP */
+  .item {
+    touch-action: pan-y;
+    user-select: none;
+  }
+
+  .item.dragging {
+    opacity: 0.4;
+    border: 1px dashed #555 !important;
+    background: #151515 !important;
+  }
+
+  .item.drag-over {
+    border-color: #f0c060 !important;
+    background: #1e1a0a !important;
+  }
+
+  .drag-handle {
+    color: #3a3a3a;
+    font-size: 14px;
+    padding: 0 4px 0 0;
+    cursor: grab;
+    flex-shrink: 0;
+    letter-spacing: -2px;
+    line-height: 1;
+    user-select: none;
+    -webkit-user-select: none;
+  }
+
+  .item.dragging .drag-handle { cursor: grabbing; }
+
   /* INLINE ITEM LAYOUT */
   .item {
     padding: 8px 10px;
@@ -1293,6 +1325,10 @@ function buildItem(type, entry) {
   const removeBtn = document.createElement('button');
   removeBtn.className = 'remove-btn';
   removeBtn.innerHTML = '×';
+  if (entry.done) {
+    removeBtn.style.opacity = '0.2';
+    removeBtn.style.pointerEvents = 'none';
+  }
   removeBtn.onclick = () => {
     const dayKey = getDayKey(currentWeek, currentDay);
 
@@ -1369,20 +1405,34 @@ function buildItem(type, entry) {
       item.replaceWith(confirmRow);
     }
   };
+  // Drag handle
+  const handle = document.createElement('span');
+  handle.className = 'drag-handle';
+  handle.innerHTML = '⠿';
+  handle.title = 'Hold to reorder';
+
+  // Wire up long-press drag on handle (not when done)
+  if (!entry.isRecurring && !entry.done) {
+    initDrag(item, handle, type);
+  } else {
+    handle.style.opacity = '0.2';
+    handle.style.pointerEvents = 'none';
+  }
+
   // Top row: name + badge + tick + delete
   const top = document.createElement('div');
   top.className = 'item-top';
-
   const nameInp = document.createElement('input');
   nameInp.type = 'text';
   nameInp.value = entry.name;
   nameInp.placeholder = type === 'cardio' ? 'e.g. Zone 2 run' : type === 'stretch' ? 'e.g. Hip flexor stretch' : 'e.g. Goblet squat';
-  if (entry.isRecurring) {
+  if (entry.isRecurring || entry.done) {
     nameInp.readOnly = true;
     nameInp.style.cursor = 'default';
   } else {
     nameInp.oninput = e => { entry.name = e.target.value; saveData(); };
   }
+  top.prepend(handle);
   top.appendChild(nameInp);
 
   // Recur badge
@@ -1423,33 +1473,140 @@ function buildItem(type, entry) {
   const stats = document.createElement('div');
   stats.className = 'item-stats';
 
+  const locked = entry.done;
   if (type === 'stretch') {
     stats.appendChild(makeNumberField('Reps', entry.reps, v => {
       entry.reps = v;
       if (entry.isRecurring && data.recurring[entry.id]) data.recurring[entry.id].reps = v;
       saveData();
-    }));
+    }, null, locked));
     stats.appendChild(makeNumberField('Sets', entry.sets, v => {
       entry.sets = v;
       if (entry.isRecurring && data.recurring[entry.id]) data.recurring[entry.id].sets = v;
       saveData();
-    }));
+    }, null, locked));
   }
   if (type === 'strength') {
-    stats.appendChild(makeNumberField('Reps', entry.reps, v => { entry.reps = v; saveData(); }));
-    stats.appendChild(makeNumberField('Sets', entry.sets, v => { entry.sets = v; saveData(); }));
-    stats.appendChild(makeNumberField('Wt (kg)', entry.weight, v => { entry.weight = v; saveData(); }, 0.5));
+    stats.appendChild(makeNumberField('Reps', entry.reps, v => { entry.reps = v; saveData(); }, null, locked));
+    stats.appendChild(makeNumberField('Sets', entry.sets, v => { entry.sets = v; saveData(); }, null, locked));
+    stats.appendChild(makeNumberField('Wt (kg)', entry.weight, v => { entry.weight = v; saveData(); }, 0.5, locked));
   }
   if (type === 'cardio') {
-    stats.appendChild(makeNumberField('Dist (km)', entry.distance, v => { entry.distance = v; saveData(); }, 0.1));
-    stats.appendChild(makeNumberField('Dur (min)', entry.duration, v => { entry.duration = v; saveData(); }));
+    stats.appendChild(makeNumberField('Dist (km)', entry.distance, v => { entry.distance = v; saveData(); }, 0.1, locked));
+    stats.appendChild(makeNumberField('Dur (min)', entry.duration, v => { entry.duration = v; saveData(); }, null, locked));
   }
 
   item.appendChild(stats);
   return item;
 }
 
-function makeNumberField(label, value, onChange, step) {
+// ── DRAG TO REORDER ─────────────────────────────────────────────────
+function initDrag(item, handle, type) {
+  let longPressTimer = null;
+  let isDragging = false;
+  let dragGhost = null;
+  let startY = 0;
+  let currentOver = null;
+
+  function getItems() {
+    return Array.from(item.parentElement ? item.parentElement.querySelectorAll('.item') : []);
+  }
+
+  function getKey() {
+    return type === 'stretch' ? 'stretches' : type === 'strength' ? 'strength' : 'cardio';
+  }
+
+  function startDrag(clientY) {
+    isDragging = true;
+    startY = clientY;
+    item.classList.add('dragging');
+
+    // Create ghost
+    dragGhost = item.cloneNode(true);
+    dragGhost.style.cssText = 'position:fixed;left:10px;right:10px;z-index:500;opacity:0.9;pointer-events:none;border-radius:10px;background:#2a2a2a;border:1.5px solid #f0c060;';
+    dragGhost.style.top = (item.getBoundingClientRect().top) + 'px';
+    document.body.appendChild(dragGhost);
+  }
+
+  function moveDrag(clientY) {
+    if (!isDragging) return;
+    const dy = clientY - startY;
+    dragGhost.style.top = (item.getBoundingClientRect().top + dy) + 'px';
+
+    // Find which item we're over
+    const items = getItems();
+    let over = null;
+    items.forEach(el => {
+      if (el === item) return;
+      const rect = el.getBoundingClientRect();
+      if (clientY > rect.top && clientY < rect.bottom) over = el;
+    });
+
+    if (currentOver && currentOver !== over) currentOver.classList.remove('drag-over');
+    if (over) over.classList.add('drag-over');
+    currentOver = over;
+  }
+
+  function endDrag() {
+    if (!isDragging) return;
+    isDragging = false;
+    item.classList.remove('dragging');
+    if (dragGhost) { dragGhost.remove(); dragGhost = null; }
+    if (currentOver) {
+      currentOver.classList.remove('drag-over');
+      // Reorder in data
+      const d = getWeekData(currentWeek)[currentDay];
+      const key = getKey();
+      const arr = d[key];
+      const fromId = item.dataset.id;
+      const toId = currentOver.dataset.id;
+      const fromIdx = arr.findIndex(e => e.id === fromId);
+      const toIdx = arr.findIndex(e => e.id === toId);
+      if (fromIdx !== -1 && toIdx !== -1) {
+        const [moved] = arr.splice(fromIdx, 1);
+        arr.splice(toIdx, 0, moved);
+        saveData();
+        renderContent();
+        renderWeeklyBar();
+        renderDayDots();
+      }
+      currentOver = null;
+    }
+  }
+
+  // Touch events on handle
+  handle.addEventListener('touchstart', function(e) {
+    const touch = e.touches[0];
+    longPressTimer = setTimeout(() => {
+      // Vibrate to signal drag start
+      if (navigator.vibrate) navigator.vibrate(40);
+      startDrag(touch.clientY);
+    }, 350);
+  }, { passive: true });
+
+  handle.addEventListener('touchmove', function(e) {
+    if (longPressTimer) { clearTimeout(longPressTimer); longPressTimer = null; }
+    if (isDragging) {
+      e.preventDefault();
+      moveDrag(e.touches[0].clientY);
+    }
+  }, { passive: false });
+
+  handle.addEventListener('touchend', function() {
+    if (longPressTimer) { clearTimeout(longPressTimer); longPressTimer = null; }
+    endDrag();
+  });
+
+  handle.addEventListener('touchcancel', function() {
+    if (longPressTimer) { clearTimeout(longPressTimer); longPressTimer = null; }
+    isDragging = false;
+    item.classList.remove('dragging');
+    if (dragGhost) { dragGhost.remove(); dragGhost = null; }
+    if (currentOver) { currentOver.classList.remove('drag-over'); currentOver = null; }
+  });
+}
+
+function makeNumberField(label, value, onChange, step, locked) {
   const fg = document.createElement('div');
   fg.className = 'field-group';
   fg.innerHTML = `<div class="item-label">${label}</div>`;
@@ -1459,7 +1616,13 @@ function makeNumberField(label, value, onChange, step) {
   if (step) inp.step = step;
   inp.value = value || '';
   inp.placeholder = '—';
-  inp.oninput = (e) => onChange(e.target.value);
+  if (locked) {
+    inp.readOnly = true;
+    inp.style.pointerEvents = 'none';
+    inp.style.opacity = '0.5';
+  } else {
+    inp.oninput = (e) => onChange(e.target.value);
+  }
   fg.appendChild(inp);
   return fg;
 }
