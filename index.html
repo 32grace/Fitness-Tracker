@@ -832,6 +832,10 @@ document.head.appendChild(link);
         <span class="freq-icon">🗓️</span>Every 3 days
       </button>
     </div>
+    <div class="freq-label" style="margin-top:14px">Until (optional)</div>
+    <input class="modal-name-input" id="modal-end-date" type="date"
+      style="margin-bottom:4px;color:#f0ece4;background:#252525 !important;">
+    <div style="font-size:11px;color:#555;margin-bottom:16px;padding:0 2px">Leave blank to repeat indefinitely</div>
     <div class="modal-actions">
       <button class="modal-cancel" id="modal-cancel">Cancel</button>
       <button class="modal-add" id="modal-confirm" disabled>Add Stretch</button>
@@ -954,7 +958,10 @@ function getDayKey(weekOffset, dayIdx) {
   const monday = getMondayOfWeek(weekOffset);
   const d = new Date(monday);
   d.setDate(monday.getDate() + dayIdx);
-  return d.toISOString().slice(0, 10);
+  // Use local date parts to avoid UTC offset shifting the date in BST etc.
+  return d.getFullYear() + '-' +
+    String(d.getMonth() + 1).padStart(2, '0') + '-' +
+    String(d.getDate()).padStart(2, '0');
 }
 
 function getRecurring() {
@@ -971,20 +978,26 @@ function getRecurTicks(dayKey) {
 // Work out which recurring stretches should appear on a given day
 function getRecurringForDay(weekOffset, dayIdx) {
   const dayKey = getDayKey(weekOffset, dayIdx);
-  const dayDate = new Date(dayKey);
   const recurring = getRecurring();
   const ticks = getRecurTicks(dayKey);
   const results = [];
 
   Object.values(recurring).forEach(r => {
-    const start = new Date(r.startDate);
-    const diffDays = Math.round((dayDate - start) / 86400000);
-    if (diffDays < 0) return; // before start date
+    // All comparisons use YYYY-MM-DD strings which sort lexicographically
+    if (dayKey < r.startDate) return; // before start date — skip
+    if (r.endDate && r.endDate.length === 10 && dayKey > r.endDate) return; // after end date — skip
+
+    // Calculate diff in days for every-N-day logic
+    const startMs = new Date(r.startDate + 'T00:00:00').getTime();
+    const dayMs   = new Date(dayKey      + 'T00:00:00').getTime();
+    const diffDays = Math.round((dayMs - startMs) / 86400000);
+
     let show = false;
-    if (r.freq === 'daily') show = true;
-    else if (r.freq === '2day') show = (diffDays % 2 === 0);
-    else if (r.freq === '3day') show = (diffDays % 3 === 0);
-    else if (r.freq === 'once') show = (r.startDate === dayKey);
+    if      (r.freq === 'daily') show = true;
+    else if (r.freq === '2day')  show = (diffDays % 2 === 0);
+    else if (r.freq === '3day')  show = (diffDays % 3 === 0);
+    else if (r.freq === 'once')  show = (r.startDate === dayKey);
+
     if (show) {
       results.push({
         id: r.id,
@@ -1173,7 +1186,11 @@ function buildItem(type, entry) {
     const badge = document.createElement('span');
     badge.className = 'recur-badge';
     const icons = { daily: '🔁 Daily', '2day': '📅 ×2', '3day': '🗓️ ×3', once: '1️⃣' };
-    badge.textContent = icons[entry.freq] || '';
+    const recurEntry = data.recurring && data.recurring[entry.id];
+    const endLabel = recurEntry && recurEntry.endDate
+      ? ' · until ' + new Date(recurEntry.endDate + 'T00:00:00').toLocaleDateString('en-GB', {day:'numeric',month:'short'})
+      : '';
+    badge.textContent = (icons[entry.freq] || '') + endLabel;
     top.appendChild(badge);
   }
 
@@ -1274,6 +1291,7 @@ let selectedFreq = null;
 function openStretchModal() {
   selectedFreq = null;
   document.getElementById('modal-name').value = '';
+  document.getElementById('modal-end-date').value = '';
   document.querySelectorAll('.freq-btn').forEach(b => b.classList.remove('selected'));
   document.getElementById('modal-confirm').disabled = true;
   document.getElementById('stretch-modal').classList.add('open');
@@ -1448,18 +1466,18 @@ document.addEventListener('DOMContentLoaded', () => {
   if (!name || !selectedFreq) return;
 
   const dayKey = getDayKey(currentWeek, currentDay);
+  const endDateRaw = document.getElementById('modal-end-date').value;
+  const endDate = (endDateRaw && endDateRaw.trim().length === 10) ? endDateRaw.trim() : null;
 
   if (selectedFreq === 'once') {
-    // Add as a normal one-off stretch for this day only
     const d = getWeekData(currentWeek)[currentDay];
     const s = emptyStretch('once');
     s.name = name;
     d.stretches.push(s);
   } else {
-    // Add as a recurring stretch
     const id = uid();
     if (!data.recurring) data.recurring = {};
-    data.recurring[id] = { id, name, reps: '', sets: '', freq: selectedFreq, startDate: dayKey };
+    data.recurring[id] = { id, name, reps: '', sets: '', freq: selectedFreq, startDate: dayKey, endDate: endDate };
   }
 
   saveData();
@@ -1508,6 +1526,45 @@ currentDay = todayIdx;
 currentWeek = 0;
 
 render();
+
+// ── SWIPE TO CHANGE DAY ──────────────────────────────────────────────
+(function() {
+  var startX = 0, startY = 0, moved = false;
+  var el = document.getElementById('content');
+
+  document.addEventListener('touchstart', function(e) {
+    startX = e.touches[0].clientX;
+    startY = e.touches[0].clientY;
+    moved = false;
+  }, { passive: true });
+
+  document.addEventListener('touchend', function(e) {
+    if (moved) return;
+    var dx = e.changedTouches[0].clientX - startX;
+    var dy = e.changedTouches[0].clientY - startY;
+    // Only trigger if horizontal swipe > 60px and not too vertical
+    if (Math.abs(dx) < 60 || Math.abs(dy) > Math.abs(dx) * 0.8) return;
+    // Don't trigger if swiping on an input
+    if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+    if (dx < 0) {
+      // Swipe left = next day
+      if (currentDay === 6) { currentWeek++; currentDay = 0; }
+      else { currentDay++; }
+    } else {
+      // Swipe right = prev day
+      if (currentDay === 0) { currentWeek--; currentDay = 6; }
+      else { currentDay--; }
+    }
+    render();
+  }, { passive: true });
+
+  document.addEventListener('touchmove', function(e) {
+    var dx = e.touches[0].clientX - startX;
+    var dy = e.touches[0].clientY - startY;
+    if (Math.abs(dx) > 10 && Math.abs(dx) > Math.abs(dy)) moved = false;
+  }, { passive: true });
+})();
+
 </script>
 
 </body>
