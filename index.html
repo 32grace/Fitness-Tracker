@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>FORM — Daily Training Log</title>
 <meta name="theme-color" content="#0e0e0e">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -56,7 +56,7 @@ document.head.appendChild(link);
     -moz-appearance: none;
     appearance: none;
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-    font-size: 14px;
+    font-size: 16px;
     font-weight: 300;
     border-radius: 0;
     outline: none;
@@ -626,7 +626,7 @@ document.head.appendChild(link);
     border: none !important;
     border-bottom: 1px solid #333 !important;
     color: #f0ece4 !important;
-    font-size: 13px;
+    font-size: 16px;
     font-weight: 400;
     padding: 2px 0 3px;
     outline: none !important;
@@ -655,7 +655,7 @@ document.head.appendChild(link);
     border: none !important;
     border-radius: 5px !important;
     color: #f0ece4 !important;
-    font-size: 12px;
+    font-size: 16px;
     text-align: center;
     padding: 4px 2px;
     outline: none !important;
@@ -681,6 +681,118 @@ document.head.appendChild(link);
   }
 
   .remove-btn:hover, .remove-btn:active { color: #ff4444; }
+
+
+  /* RECURRING DELETE OPTIONS */
+  .item-recur-confirm {
+    padding: 10px;
+    background: #2a1a1a;
+    border-radius: 10px;
+    border: 1.5px solid #ff4444;
+    margin-bottom: 5px;
+  }
+
+  .item-recur-confirm .recur-del-title {
+    font-size: 11px;
+    color: #ff8888;
+    font-family: 'DM Sans', sans-serif;
+    margin-bottom: 8px;
+    letter-spacing: 0.3px;
+  }
+
+  .recur-del-options {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .recur-del-opt {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    padding: 7px 10px;
+    background: #1e1e1e;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+    width: 100%;
+    text-align: left;
+  }
+
+  .recur-del-opt:active { background: #2a2a2a; }
+
+  .recur-del-opt .opt-label {
+    font-size: 12px;
+    color: #f0ece4;
+    font-family: 'DM Sans', sans-serif;
+  }
+
+  .recur-del-opt .opt-desc {
+    font-size: 10px;
+    color: #666;
+    font-family: 'DM Sans', sans-serif;
+    margin-top: 1px;
+  }
+
+  .recur-del-opt .opt-icon { font-size: 14px; flex-shrink: 0; }
+
+  .recur-del-opt.danger .opt-label { color: #ff8888; }
+
+  .recur-del-cancel {
+    width: 100%;
+    margin-top: 6px;
+    padding: 7px;
+    background: none;
+    border: 1px solid #333;
+    border-radius: 8px;
+    color: #666;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 12px;
+    cursor: pointer;
+  }
+
+  /* INLINE DELETE CONFIRM */
+  .item-delete-confirm {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 10px;
+    background: #2a1a1a;
+    border-radius: 10px;
+    border: 1.5px solid #ff4444;
+    margin-bottom: 5px;
+  }
+
+  .item-delete-confirm span {
+    flex: 1;
+    font-size: 12px;
+    color: #ff8888;
+    font-family: 'DM Sans', sans-serif;
+  }
+
+  .item-del-yes {
+    background: #ff4444;
+    border: none;
+    border-radius: 6px;
+    color: #fff;
+    font-size: 12px;
+    font-family: 'DM Sans', sans-serif;
+    padding: 5px 12px;
+    cursor: pointer;
+  }
+
+  .item-del-no {
+    background: #333;
+    border: none;
+    border-radius: 6px;
+    color: #aaa;
+    font-size: 12px;
+    font-family: 'DM Sans', sans-serif;
+    padding: 5px 10px;
+    cursor: pointer;
+  }
+
 
 
 
@@ -975,6 +1087,29 @@ function getRecurTicks(dayKey) {
   return data.recurTicks[dayKey];
 }
 
+function getRecurSkips() {
+  if (!data.recurSkips) data.recurSkips = {};
+  return data.recurSkips;
+}
+
+function skipRecurOnDay(id, dayKey) {
+  if (!data.recurSkips) data.recurSkips = {};
+  if (!data.recurSkips[id]) data.recurSkips[id] = [];
+  if (!data.recurSkips[id].includes(dayKey)) data.recurSkips[id].push(dayKey);
+  saveData();
+}
+
+function setRecurEndDate(id, dayKey) {
+  // Set end date to the day BEFORE dayKey so it stops from dayKey onwards
+  const d = new Date(dayKey + 'T00:00:00');
+  d.setDate(d.getDate() - 1);
+  const newEnd = d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0');
+  if (data.recurring && data.recurring[id]) {
+    data.recurring[id].endDate = newEnd;
+    saveData();
+  }
+}
+
 // Work out which recurring stretches should appear on a given day
 function getRecurringForDay(weekOffset, dayIdx) {
   const dayKey = getDayKey(weekOffset, dayIdx);
@@ -986,6 +1121,9 @@ function getRecurringForDay(weekOffset, dayIdx) {
     // All comparisons use YYYY-MM-DD strings which sort lexicographically
     if (dayKey < r.startDate) return; // before start date — skip
     if (r.endDate && r.endDate.length === 10 && dayKey > r.endDate) return; // after end date — skip
+
+    // Check if skipped on this specific day
+    if (data.recurSkips && data.recurSkips[r.id] && data.recurSkips[r.id].includes(dayKey)) return;
 
     // Calculate diff in days for every-N-day logic
     const startMs = new Date(r.startDate + 'T00:00:00').getTime();
@@ -1156,13 +1294,79 @@ function buildItem(type, entry) {
   removeBtn.className = 'remove-btn';
   removeBtn.innerHTML = '×';
   removeBtn.onclick = () => {
+    const dayKey = getDayKey(currentWeek, currentDay);
+
     if (entry.isRecurring) {
-      // No confirm dialog — just delete directly (mobile blocks confirm())
-      delete data.recurring[entry.id];
-      saveData();
-      renderContent(); renderWeeklyBar(); renderDayDots();
+      // Show 3-option recurring delete panel
+      const panel = document.createElement('div');
+      panel.className = 'item-recur-confirm';
+
+      const title = document.createElement('div');
+      title.className = 'recur-del-title';
+      title.textContent = 'Remove "' + entry.name + '"…';
+      panel.appendChild(title);
+
+      const opts = document.createElement('div');
+      opts.className = 'recur-del-options';
+
+      function makeOpt(icon, label, desc, danger, onClick) {
+        const btn = document.createElement('button');
+        btn.className = 'recur-del-opt' + (danger ? ' danger' : '');
+        btn.innerHTML = '<span class="opt-icon">' + icon + '</span>' +
+          '<div style="flex:1"><div class="opt-label">' + label + '</div>' +
+          '<div class="opt-desc">' + desc + '</div></div>';
+        btn.onclick = e => { e.stopPropagation(); onClick(); };
+        return btn;
+      }
+
+      opts.appendChild(makeOpt('📅', 'Just today', 'Remove from this day only', false, () => {
+        skipRecurOnDay(entry.id, dayKey);
+        renderContent(); renderWeeklyBar(); renderDayDots();
+      }));
+
+      opts.appendChild(makeOpt('⏭️', 'Today & future', 'Stop recurring from today onwards', false, () => {
+        setRecurEndDate(entry.id, dayKey);
+        renderContent(); renderWeeklyBar(); renderDayDots();
+      }));
+
+      opts.appendChild(makeOpt('🗑️', 'All occurrences', 'Delete entirely including future days', true, () => {
+        delete data.recurring[entry.id];
+        saveData();
+        renderContent(); renderWeeklyBar(); renderDayDots();
+      }));
+
+      panel.appendChild(opts);
+
+      const cancelBtn = document.createElement('button');
+      cancelBtn.className = 'recur-del-cancel';
+      cancelBtn.textContent = 'Cancel';
+      cancelBtn.onclick = e => { e.stopPropagation(); renderContent(); renderWeeklyBar(); renderDayDots(); };
+      panel.appendChild(cancelBtn);
+
+      item.replaceWith(panel);
     } else {
-      removeItem(type, entry.id);
+      // Non-recurring — simple inline confirm
+      const confirmRow = document.createElement('div');
+      confirmRow.className = 'item-delete-confirm';
+
+      const msg = document.createElement('span');
+      const label = entry.name ? '"' + entry.name + '"' : 'this';
+      msg.textContent = 'Delete ' + label + '?';
+
+      const noBtn = document.createElement('button');
+      noBtn.className = 'item-del-no';
+      noBtn.textContent = 'Keep';
+      noBtn.onclick = e => { e.stopPropagation(); renderContent(); renderWeeklyBar(); renderDayDots(); };
+
+      const yesBtn = document.createElement('button');
+      yesBtn.className = 'item-del-yes';
+      yesBtn.textContent = 'Delete';
+      yesBtn.onclick = e => { e.stopPropagation(); removeItem(type, entry.id); };
+
+      confirmRow.appendChild(msg);
+      confirmRow.appendChild(noBtn);
+      confirmRow.appendChild(yesBtn);
+      item.replaceWith(confirmRow);
     }
   };
   // Top row: name + badge + tick + delete
@@ -1529,39 +1733,37 @@ render();
 
 // ── SWIPE TO CHANGE DAY ──────────────────────────────────────────────
 (function() {
-  var startX = 0, startY = 0, moved = false;
-  var el = document.getElementById('content');
+  var startX = 0, startY = 0, startTime = 0, isMultiTouch = false;
 
   document.addEventListener('touchstart', function(e) {
+    // Ignore multi-touch (pinch gestures)
+    if (e.touches.length > 1) { isMultiTouch = true; return; }
+    isMultiTouch = false;
     startX = e.touches[0].clientX;
     startY = e.touches[0].clientY;
-    moved = false;
+    startTime = Date.now();
   }, { passive: true });
 
   document.addEventListener('touchend', function(e) {
-    if (moved) return;
+    if (isMultiTouch) return;
+    // Don't trigger if touch was on an input or button
+    var tag = e.target.tagName;
+    if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'BUTTON' || tag === 'SELECT') return;
     var dx = e.changedTouches[0].clientX - startX;
     var dy = e.changedTouches[0].clientY - startY;
-    // Only trigger if horizontal swipe > 60px and not too vertical
-    if (Math.abs(dx) < 60 || Math.abs(dy) > Math.abs(dx) * 0.8) return;
-    // Don't trigger if swiping on an input
-    if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+    var dt = Date.now() - startTime;
+    // Must be: fast (<400ms), long (>80px), clearly horizontal (dx > 2*dy)
+    if (dt > 400) return;
+    if (Math.abs(dx) < 80) return;
+    if (Math.abs(dy) > Math.abs(dx) * 0.5) return;
     if (dx < 0) {
-      // Swipe left = next day
       if (currentDay === 6) { currentWeek++; currentDay = 0; }
       else { currentDay++; }
     } else {
-      // Swipe right = prev day
       if (currentDay === 0) { currentWeek--; currentDay = 6; }
       else { currentDay--; }
     }
     render();
-  }, { passive: true });
-
-  document.addEventListener('touchmove', function(e) {
-    var dx = e.touches[0].clientX - startX;
-    var dy = e.touches[0].clientY - startY;
-    if (Math.abs(dx) > 10 && Math.abs(dx) > Math.abs(dy)) moved = false;
   }, { passive: true });
 })();
 
